@@ -1,0 +1,62 @@
+[
+  {
+    "model": "catalog.category",
+    "pk": 1,
+    "fields": {
+      "name": "Office Software",
+      "description": "Docs, tables, email..."
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 2,
+    "fields": {
+      "name": "Engineering Software",
+      "description": "If you love Math etc."
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 3,
+    "fields": {
+      "name": "Developing Software",
+      "description": "Buy licenses and enjoy"
+    }
+  },
+  {
+    "model": "catalog.product",
+    "fields": {
+      "name": "MS Office",
+      "description": "Great!",
+      "photo": "",
+      "category": 1,
+      "price": 7000,
+      "create_date": "2023-07-28",
+      "change_date": "2023-07-28"
+    }
+  },
+  {
+    "model": "catalog.product",
+    "fields": {
+      "name": "MathCad",
+      "description": "Greater!",
+      "photo": "",
+      "category": 2,
+      "price": 10000,
+      "create_date": "2023-07-28",
+      "change_date": "2023-07-28"
+    }
+  },
+  {
+    "model": "catalog.product",
+    "fields": {
+      "name": "PyCharm",
+      "description": "Greatest!",
+      "photo": "",
+      "category": 3,
+      "price": 7000,
+      "create_date": "2023-07-28",
+      "change_date": "2023-07-28"
+    }
+  }
+]
