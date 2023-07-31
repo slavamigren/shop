@@ -1,16 +1,37 @@
+from django.contrib.messages import success
 from django.shortcuts import render
+from django.urls import reverse, reverse_lazy
+from django.views.generic import ListView, TemplateView, DetailView, CreateView
 from catalog.models import Product, Contact
 
-def index(request):
-    return render(request, 'catalog/index.html', {'products': Product.objects.order_by("-pk")[:5]})
 
-def contacts(request):
-    if request.method == 'POST':
-        name = request.POST.get('name')
-        phone = request.POST.get('phone')
-        text = request.POST.get('text')
-        print(name, phone, text)
-    return render(request, 'catalog/contacts.html', {'contacts': Contact.objects.all()})
 
-def product(request, pk):
-    return render(request, 'catalog/product.html', {'product': Product.objects.get(pk=pk)})
+class ProductListView(ListView):
+    model = Product
+    template_name = 'catalog/index.html'
+    paginate_by = 3
+
+
+
+
+class ProductDetailView(DetailView):
+    model = Product
+    template_name = 'catalog/product.html'
+
+
+class ProductCreateView(CreateView):
+    model = Product
+    fields = ('name', 'description', 'photo', 'category', 'price')
+    success_url = reverse_lazy('catalog:index')
+
+
+class ContactListView(ListView):
+    model = Contact
+    template_name = 'catalog/contacts.html'
+
+
+class ContactCreateView(CreateView):
+    model = Contact
+    fields = ('name', 'phone_number', 'user_text')
+    success_url = reverse_lazy('catalog:contacts')
+

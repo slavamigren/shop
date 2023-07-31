@@ -23,6 +23,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('catalog.urls')),
     path('contacts/', include('catalog.urls')),
+
+    path('blog/', include('blog.urls')),
+
+#    path('new_contact', include('catalog.urls')),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

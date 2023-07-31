@@ -3,8 +3,8 @@
 {% block content %}
 
     <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-        <h1 class="display-4">{{product.name}}</h1>
-        <p class="lead">{{product.name}} - {{product.description}}</p>
+        <h1 class="display-4">{{object.name}}</h1>
+        <p class="lead">{{object.name}} - {{object.description}}</p>
     </div>
 
     <div class="container">
@@ -12,16 +12,16 @@
               <div class="col-12">
                   <div class="card mb-4 box-shadow">
                       <div class="card-header">
-                          <h4 class="my-0 font-weight-normal">{{product.name}}</h4>
+                          <h4 class="my-0 font-weight-normal">{{object.name}}</h4>
                       </div>
                       <div class="card-body">
-                          <h1 class="card-title pricing-card-title">{{product.price}} руб</h1>
+                          <h1 class="card-title pricing-card-title">{{object.price}} руб</h1>
                           <ul class="list-unstyled mt-3 mb-4 text-start m-3">
-                              <li>{{product.description}}</li>
+                              <li>{{object.description}}</li>
                           </ul>
                       </div>
                   </div>
-                  <img src="{% mediapath product.photo %}" alt="{{product.name}}">
+                  <img src="{% mediapath object.photo %}" alt="{{object.name}}">
               </div>
         </div>
     </div>

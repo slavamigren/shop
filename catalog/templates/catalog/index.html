@@ -9,10 +9,27 @@
 
     <div class="container">
         <div class="row text-center">
-            {% for product in products %}
+            {% for object in object_list %}
                 {% include 'catalog/includes/inc_product.html' %}
             {% endfor %}
+
+
+            <div class="col-3">
+                <div class="card mb-4 box-shadow">
+                    <div class="card-header">
+                        <h4 class="my-0 font-weight-normal">Редактирование</h4>
+                    </div>
+                    <div class="card-body">
+                        <h1 class="card-title pricing-card-title">Новый</h1>
+                        <ul class="list-unstyled mt-3 mb-4 text-start m-3">
+                            <li>Новый продукт</li>
+                        </ul>
+                        <a href="{% url 'catalog:create_new_product' %}" type="button" class="btn btn-lg btn-block btn-outline-primary">Добавить</a>
+                    </div>
+                </div>
+            </div>
         </div>
+        {% include 'catalog/includes/pagination.html' with page=page_obj %}
     </div>
 
 {% endblock %}

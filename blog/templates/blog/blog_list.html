@@ -1,22 +1,23 @@
-{% extends 'catalog/base.html' %}
+{% extends 'blog/base.html' %}
 {% block content %}
     <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-        <h1 class="display-4">Контакты</h1>
+        <h1 class="display-4">Посты</h1>
     </div>
 
     <div class="container">
         <div class = "col-12 mb-5">
-            <a href="{% url 'catalog:new_contact' %}" class="btn btn-primary">Добавить контакт</a>
+            <a href="{% url 'blog:create_post' %}" class="btn btn-primary">Добавить пост</a>
         </div>
         <div class="row text-start">
             <div class="col-lg-12 col-md-6 col-sm-12">
 
                 {% for object in object_list %}
-                    {% include 'catalog/includes/contact_card.html' %}
+                    {% include 'blog/includes/post_card.html' %}
                 {% endfor %}
 
             </div>
 
         </div>
+        {% include 'blog/includes/pagination.html' with page=page_obj %}
     </div>
 {% endblock %}
