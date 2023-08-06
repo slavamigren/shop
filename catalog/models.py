@@ -34,6 +34,20 @@ class Product(models.Model):
         verbose_name_plural = 'Продукты'
 
 
+class ProductVersion(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name='продукт')
+    num = models.IntegerField(verbose_name='номер версии')
+    name = models.CharField(max_length=50, verbose_name='название версии')
+    is_actual = models.BooleanField(default=False, verbose_name='актуальная версия')
+
+    def __str__(self):
+        return f'{self.product.name} ver. {self.num} - {self.name}'
+
+    class Meta:
+        verbose_name = 'Версия продукта'
+        verbose_name_plural = 'Версии продуктов'
+
+
 class Contact(models.Model):
     name = models.CharField(max_length=30, verbose_name='Имя клиента')
     phone_number = models.CharField(max_length=15, verbose_name='Телефон клиента')
@@ -45,3 +59,14 @@ class Contact(models.Model):
     class Meta:
         verbose_name = 'Контактные данные'
         verbose_name_plural = 'Контактные данные'
+
+
+class ForbiddenWords(models.Model):
+    word = models.CharField(max_length=30, verbose_name='запрещённое слово')
+
+    def __str__(self):
+        return self.word
+
+    class Meta:
+        verbose_name = 'Слово'
+        verbose_name_plural = 'Слова'

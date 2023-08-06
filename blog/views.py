@@ -1,6 +1,8 @@
 from django.contrib.messages import success
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, TemplateView, DetailView, CreateView, DeleteView, UpdateView
+
+from blog.forms import BlogForm
 from blog.models import Blog
 from pytils.translit import slugify
 from django.core.mail import send_mail
@@ -31,7 +33,7 @@ class BlogDetailView(DetailView):
 
 class BlogCreateView(CreateView):
     model = Blog
-    fields = ('title', 'text', 'avatar', 'is_published')
+    form_class = BlogForm
     success_url = reverse_lazy('blog:blog')
 
     def form_valid(self, form):
@@ -50,7 +52,7 @@ class BlogDeleteView(DeleteView):
 
 class BlogUpdateView(UpdateView):
     model = Blog
-    fields = ('title', 'text', 'avatar', 'is_published')
+    form_class = BlogForm
 
     def form_valid(self, form):
         if form.is_valid():
