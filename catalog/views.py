@@ -1,5 +1,5 @@
 from django.contrib.messages import success
-from django.forms import inlineformset_factory
+from django.forms import inlineformset_factory, formset_factory
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, TemplateView, DetailView, CreateView, UpdateView, DeleteView
@@ -92,4 +92,3 @@ class ContactCreateView(CreateView):
     model = Contact
     form_class = ContactForm
     success_url = reverse_lazy('catalog:contacts')
-

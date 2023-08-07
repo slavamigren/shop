@@ -1,6 +1,6 @@
 from django import forms
-
 from catalog.models import Product, Category, ForbiddenWords, ProductVersion, Contact
+from django.forms import BaseFormSet
 
 
 class StyleFormMixin:
@@ -11,12 +11,12 @@ class StyleFormMixin:
 
 class ProductForm(StyleFormMixin, forms.ModelForm):
 
+
     class Meta:
         model = Product
         fields = ('name', 'description', 'photo', 'category', 'price')
 
     def clean_name(self):
-
         cleaned_data = self.cleaned_data['name']
         if any(obj.word.lower() in cleaned_data.lower() for obj in ForbiddenWords.objects.all()):
             raise forms.ValidationError('Этот продукт запрещён')
@@ -46,3 +46,19 @@ class ContactForm(StyleFormMixin, forms.ModelForm):
     class Meta:
         model = Contact
         fields = ('name', 'phone_number', 'user_text')
+
+
+class BaseProductVersionFormSet(BaseFormSet):
+
+    def clean(self):
+        """Checks that no two articles have the same title."""
+        if any(self.errors):
+            # Don't bother validating the formset unless each form is valid on its own
+            return
+        for form in self.forms:
+            if self.can_delete and self._should_delete_form(form):
+                continue
+            is_actual = form.cleaned_data.get("is_actual")
+            if is_actual:
+                print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+            #     raise forms.ValidationError("!!!!!!!!!!!!!!!!!!!!!!!!")
