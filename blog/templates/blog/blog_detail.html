@@ -16,8 +16,12 @@
     <div class="card">
         <p class="card-text text-center"><small class="text-body-secondary">views count: {{ object.views_count }}</small></p>
         <div class="card-body text-center">
-            <a href="{% url 'blog:update_post' object.pk %}" class="btn btn-primary">Редактировать</a>
-            <a href="{% url 'blog:delete_post' object.pk %}" class="btn btn-primary">Удалить</a>
+            {% if perms.blog.change_blog and owner is True %}
+                <a href="{% url 'blog:update_post' object.pk %}" class="btn btn-primary">Редактировать</a>
+            {% endif %}
+            {% if perms.blog.delete_blog and owner is True %}
+                <a href="{% url 'blog:delete_post' object.pk %}" class="btn btn-primary">Удалить</a>
+            {% endif %}
         </div>
     </div>
 

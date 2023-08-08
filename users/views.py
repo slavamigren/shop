@@ -1,3 +1,4 @@
+from django.contrib.auth import login
 from django.contrib.auth.views import LoginView as BaseLoginView
 from django.contrib.auth.views import LogoutView as BaseLogoutView
 from django.core.mail import send_mail
@@ -77,8 +78,9 @@ def verification_new_user(request, pk):  # верифицирует пользо
             new_user.is_active = True
             new_user.verification_code = ''
             new_user.save(update_fields=['is_active', 'verification_code'])
-            return redirect(reverse('users:login'))
-
+            login(request, new_user)  # авторизуем пользователя и отправляем на главную страницу
+            return redirect(reverse('catalog:index'))
+            # return redirect(reverse('users:login')) #  если не авторизовать сразу, можно отправить на авторизацию
     else:
         context = {
             'first_trial': True,

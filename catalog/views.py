@@ -1,13 +1,14 @@
 from django.contrib.messages import success
 from django.core.exceptions import PermissionDenied
 from django.forms import inlineformset_factory, formset_factory
+from django.http import Http404
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, TemplateView, DetailView, CreateView, UpdateView, DeleteView
 
 from catalog.forms import ProductForm, ProductVersionForm, ContactForm
 from catalog.models import Product, Contact, ProductVersion
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
 class ProductListView(ListView):
     model = Product
@@ -28,14 +29,21 @@ class ProductDetailView(DetailView):
         context_data = super().get_context_data(**kwargs)
         is_actual_data = ProductVersion.objects.filter(product_id=self.kwargs['pk'], is_actual=True)
         context_data['is_actual_inf'] = is_actual_data
+
+        if self.object.owner != self.request.user:
+            context_data['owner'] = False
+        else:
+            context_data['owner'] = True
+
         return context_data
 
 
-class ProductCreateView(LoginRequiredMixin, CreateView):
+class ProductCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):  # LoginRequiredMixin для закрытия доступа неавторизованному
     model = Product
     form_class = ProductForm
     success_url = reverse_lazy('catalog:index')
-    login_url = reverse_lazy('users:login')
+    permission_required = 'catalog.add_product'
+    #login_url = reverse_lazy('users:login')  # если не авторизован, не даём просмотр, а отправляем на страницу авторизации
 
 
     def get_context_data(self, **kwargs):
@@ -58,11 +66,18 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class ProductUpdateView(LoginRequiredMixin, UpdateView):
+class ProductUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     model = Product
     form_class = ProductForm
     success_url = reverse_lazy('catalog:index')
-    login_url = reverse_lazy('users:login')
+    permission_required = 'catalog.change_product'
+    #login_url = reverse_lazy('users:login')
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if self.object.owner != self.request.user and not self.request.user.is_staff:
+            raise Http404
+        return self.object
 
     def get_success_url(self):
         return reverse('catalog:product_detail', args=[self.kwargs['pk']])
@@ -85,10 +100,17 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
         return super().form_valid(form)
 
 
-class ProductDeleteView(LoginRequiredMixin, DeleteView):
+class ProductDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     model = Product
     success_url = reverse_lazy('catalog:index')
-    login_url = reverse_lazy('users:login')
+    permission_required = 'catalog.delete_product'
+    #login_url = reverse_lazy('users:login')
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if self.object.owner != self.request.user and not self.request.user.is_staff:
+            raise Http404
+        return self.object
 
 
 class ContactListView(ListView):

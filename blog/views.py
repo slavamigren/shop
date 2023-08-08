@@ -1,4 +1,5 @@
 from django.contrib.messages import success
+from django.http import Http404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, TemplateView, DetailView, CreateView, DeleteView, UpdateView
 
@@ -7,6 +8,7 @@ from blog.models import Blog
 from pytils.translit import slugify
 from django.core.mail import send_mail
 from django.conf import settings
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
 
 class BlogListView(ListView):
@@ -18,9 +20,17 @@ class BlogListView(ListView):
         queryset = queryset.filter(is_published=True)
         return queryset
 
+
 class BlogDetailView(DetailView):
     model = Blog
 
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        if self.object.owner != self.request.user:
+            context_data['owner'] = False
+        else:
+            context_data['owner'] = True
+        return context_data
 
     def get_object(self, queryset=None):
         self.object = super().get_object(queryset)
@@ -31,10 +41,11 @@ class BlogDetailView(DetailView):
         return self.object
 
 
-class BlogCreateView(CreateView):
+class BlogCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     model = Blog
     form_class = BlogForm
     success_url = reverse_lazy('blog:blog')
+    permission_required = 'blog.add_blog'
 
     def form_valid(self, form):
         if form.is_valid():
@@ -44,15 +55,29 @@ class BlogCreateView(CreateView):
         return super().form_valid(form)
 
 
-class BlogDeleteView(DeleteView):
+class BlogDeleteView(LoginRequiredMixin,PermissionRequiredMixin, DeleteView):
     model = Blog
     success_url = reverse_lazy('blog:blog')
+    permission_required = 'blog.delete_blog'
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if self.object.owner != self.request.user and not self.request.user.is_staff:
+            raise Http404
+        return self.object
 
 
 
-class BlogUpdateView(UpdateView):
+class BlogUpdateView(LoginRequiredMixin,PermissionRequiredMixin, UpdateView):
     model = Blog
     form_class = BlogForm
+    permission_required = 'blog.change_blog'
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if self.object.owner != self.request.user and not self.request.user.is_staff:
+            raise Http404
+        return self.object
 
     def form_valid(self, form):
         if form.is_valid():

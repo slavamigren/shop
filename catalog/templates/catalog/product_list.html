@@ -20,7 +20,9 @@
             <div class="col-3"></div>
             <div class="col-3"></div>
             <div class="col-3">
-                <a class="p-2 btn btn-outline-primary " href="{% url 'catalog:create_new_product' %}" type="button" class="btn btn-lg btn-block btn-outline-primary">Добавить новый продукт</a>
+                {% if perms.catalog.add_product %}
+                    <a class="p-2 btn btn-outline-primary " href="{% url 'catalog:create_new_product' %}" type="button" class="btn btn-lg btn-block btn-outline-primary">Добавить новый продукт</a>
+                {% endif %}
             </div>
         </div>
     </div>
