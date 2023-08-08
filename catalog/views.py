@@ -1,4 +1,5 @@
 from django.contrib.messages import success
+from django.core.exceptions import PermissionDenied
 from django.forms import inlineformset_factory, formset_factory
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
@@ -6,7 +7,7 @@ from django.views.generic import ListView, TemplateView, DetailView, CreateView,
 
 from catalog.forms import ProductForm, ProductVersionForm, ContactForm
 from catalog.models import Product, Contact, ProductVersion
-
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 class ProductListView(ListView):
     model = Product
@@ -30,10 +31,12 @@ class ProductDetailView(DetailView):
         return context_data
 
 
-class ProductCreateView(CreateView):
+class ProductCreateView(LoginRequiredMixin, CreateView):
     model = Product
     form_class = ProductForm
     success_url = reverse_lazy('catalog:index')
+    login_url = reverse_lazy('users:login')
+
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
@@ -47,16 +50,19 @@ class ProductCreateView(CreateView):
     def form_valid(self, form):
         formset = self.get_context_data()['formset']
         self.object = form.save()
+        self.object.owner = self.request.user
+        self.object.save()
         if formset.is_valid():
             formset.instance = self.object
             formset.save()
         return super().form_valid(form)
 
 
-class ProductUpdateView(UpdateView):
+class ProductUpdateView(LoginRequiredMixin, UpdateView):
     model = Product
     form_class = ProductForm
     success_url = reverse_lazy('catalog:index')
+    login_url = reverse_lazy('users:login')
 
     def get_success_url(self):
         return reverse('catalog:product_detail', args=[self.kwargs['pk']])
@@ -79,9 +85,10 @@ class ProductUpdateView(UpdateView):
         return super().form_valid(form)
 
 
-class ProductDeleteView(DeleteView):
+class ProductDeleteView(LoginRequiredMixin, DeleteView):
     model = Product
     success_url = reverse_lazy('catalog:index')
+    login_url = reverse_lazy('users:login')
 
 
 class ContactListView(ListView):

@@ -43,6 +43,9 @@ INSTALLED_APPS = [
 
     'catalog',
     'blog',
+    'django_dump_load_utf8',  # python manage.py dumpdatautf8 --output data.json
+    'users',
+
 ]
 
 MIDDLEWARE = [
@@ -149,3 +152,8 @@ EMAIL_USE_SSL = True
 SERVER_EMAIL = EMAIL_HOST_USER
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 EMAIL_ADMIN = EMAIL_HOST_USER
+
+
+AUTH_USER_MODEL = 'users.User'
+LOGOUT_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/'
