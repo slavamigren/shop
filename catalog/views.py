@@ -99,3 +99,4 @@ class ContactCreateView(CreateView):
     model = Contact
     form_class = ContactForm
     success_url = reverse_lazy('catalog:contacts')
+
