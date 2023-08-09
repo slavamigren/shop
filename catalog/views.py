@@ -10,13 +10,16 @@ from catalog.forms import ProductForm, ProductVersionForm, ContactForm
 from catalog.models import Product, Contact, ProductVersion
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
+from catalog.services import get_active_products_version
+
+
 class ProductListView(ListView):
     model = Product
     paginate_by = 12
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
-        is_actual_data = ProductVersion.objects.filter(is_actual=True)
+        is_actual_data = get_active_products_version()  # ProductVersion.objects.filter(is_actual=True)
         context_data['is_actual_inf'] = is_actual_data
         context_data['pk_of_actual'] = [i.product_id for i in is_actual_data]
         return context_data
